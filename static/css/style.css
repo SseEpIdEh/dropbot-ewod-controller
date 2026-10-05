@@ -277,3 +277,65 @@ button {
     outline: 2px solid #777;
     outline-offset: -2px;
 }
+.camera-container {
+    width: 100%;
+    max-width: 850px;
+    margin: 16px auto;
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#camera-feed {
+    display: block;
+    width: 100%;
+    min-height: 280px;
+    background: #111;
+}
+
+.camera-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 12px;
+}
+
+#camera-select {
+    min-width: 220px;
+    padding: 8px;
+}
+
+.camera-status {
+    margin-top: 12px;
+    font-weight: 600;
+}ø
+
+.camera-container {
+    overflow: hidden;
+}
+
+#camera-feed {
+    transform-origin: center center;
+    transition: transform 0.15s ease;
+}
+
+#camera-zoom {
+    width: 150px;
+}
+
+#camera-zoom-value {
+    min-width: 45px;
+    font-weight: 600;
+}
+#camera-mode {
+    min-width: 250px;
+    padding: 8px;
+}
+.electrode-id-label {
+    font-size: 2.2px;
+    font-weight: 700;
+    fill: #111;
+    pointer-events: none;
+    user-select: none;
+}

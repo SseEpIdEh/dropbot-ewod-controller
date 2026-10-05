@@ -1,4 +1,4 @@
-∑
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,108 +32,17 @@
         <div class="selected-electrode-panel">
             Selected electrodes:
             <span id="selected-electrode">None</span>
-            <span style="margin-left: 20px;">
-   		 DropBot channels:
-   		 <strong id="selected-channels">None</strong>
-	   </span>  
 
             <button id="clear-electrodes" type="button">
                 Turn Off All
             </button>
-            <button id="toggle-routes" type="button">
+            <button id="toggle_routes" type="button">
                 Hide Routes
             </button>
-            <button id="toggle-electrode-ids" type="button">
-               Show Electrode IDs
-
-            </button> 
         </div>
     </section>
 
-    <section class="card camera-panel">
-
-    <h2>Live Camera</h2>
-
-    <div class="camera-container">
-
-        <video
-            id="camera-feed"
-            autoplay
-            playsinline
-            muted>
-        </video>
-
-    </div>
-
-    <div class="camera-controls">
-
-        <label for="camera-select">
-            Camera:
-        </label>
-
-        <select id="camera-select">
-            <option value="">
-                Default Camera
-            </option>
-        </select>
-
-        <button id="start-camera" type="button">
-            Start Camera
-        </button>
-        <label for="camera-mode">
-    Camera Mode:
-</label>
-
-<select id="camera-mode">
-    <option value="balanced">
-        Balanced — 1080p / 30 fps
-    </option>
-
-    <option value="detail">
-        High Detail — 1920×1440 / 30 fps
-    </option>
-
-    <option value="speed">
-        Fast Motion — 1080p / 60 fps
-    </option>
-</select>
-
-        <button id="stop-camera" type="button">
-            Stop Camera
-        </button>
-        
-
-        <label for="camera-zoom">
-    Zoom:
-</label>
-
-<input
-    id="camera-zoom"
-    type="range"
-    min="1"
-    max="4"
-    step="0.1"
-    value="1">
-
-<span id="camera-zoom-value">
-    1.0×
-</span>
-
-<button id="start-recording" type="button">
-    Record Video
-</button>
-
-<button id="stop-recording" type="button" disabled>
-    Stop Recording
-</button>
-    </div>
-
-    <div class="camera-status">
-        Camera status:
-        <span id="camera-status">Off</span>
-    </div>
-
-</section>
+    
     <section class="card protocol-panel">
         <h2>Protocol</h2>
 
@@ -268,9 +177,9 @@
 
 </main>
 
-<script src="/static/js/chip.js"></script>
-<script src="/static/js/ui-controls.js"></script>
+
 <script src="{{ url_for('static', filename='js/chip.js') }}"></script>
+<script src="/static/js/ui-controls.js"></script>
 
 </body>
 </html>
