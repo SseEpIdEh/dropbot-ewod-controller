@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    // =========================================================
+    // EWOD SVG
+    // =========================================================
+
     const svg = document.querySelector(".svg-wrapper svg");
 
     if (!svg) {
@@ -7,8 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+
     // =========================================================
-    // UI
+    // USER INTERFACE ELEMENTS
     // =========================================================
 
     const selectedDisplay =
@@ -32,11 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const addStepButton =
         document.getElementById("add-step");
 
-    const deleteStepButton =
-        document.getElementById("
+    const updateStepButton =
+        document.getElementById("update-step");
 
-const updateStepButton =
-    document.getElementById("update-step");delete-step");
+    const deleteStepButton =
+        document.getElementById("delete-step");
 
     const clearProtocolButton =
         document.getElementById("clear-protocol");
@@ -67,7 +72,7 @@ const updateStepButton =
 
 
     // =========================================================
-    // ELECTRODES
+    // ELECTRODE STATE
     // =========================================================
 
     const savedElectrodes = JSON.parse(
@@ -77,53 +82,46 @@ const updateStepButton =
     const selectedElectrodes =
         new Set(savedElectrodes);
 
-    const electrodePaths = new Map();
+    const electrodePaths =
+        new Map();
 
     let electrodeNumber = 1;
 
 
-    svg.querySelectorAll("path").forEach((path) => {
+    svg.querySelectorAll('path[id^="electrode"]').forEach((path) => {
 
-        const style =
-            path.getAttribute("style") || "";
+    const svgId = path.id;
 
-        if (
-            style.includes("fill:#FFFFFF") ||
-            style.includes("fill:#ffffff")
-        ) {
+    const electrodeId = svgId;
 
-            const electrodeId =
-                "E" +
-                String(electrodeNumber).padStart(3, "0");
+    path.classList.add("electrode");
+    const electrodeId = path.id;
 
-            path.classList.add("electrode");
+    path.dataset.electrode = electrodeId;
 
-            path.dataset.electrode =
-                electrodeId;
-
-            electrodePaths.set(
-                electrodeId,
-                path
-            );
-
-            if (selectedElectrodes.has(electrodeId)) {
+    electrodePaths.set(
+        electrodeId,
+        path
+    ); {
+    if (
+                selectedElectrodes.has(electrodeId)
+            ) {
                 path.classList.add("selected");
             }
 
-            path.addEventListener("click", (event) => {
+            path.addEventListener(
+                "click",
+                (event) => {
 
-                event.stopPropagation();
+                    event.stopPropagation();
 
-                // Don't manually change electrodes while protocol is running.
-                if (protocolRunning) {
-                    return;
-                }
+                    if (protocolRunning) {
+                        return;
+                    }
 
-                toggleElectrode(electrodeId);
-            });
-
-            electrodeNumber++;
-        }
+                    toggleElectrode(
+                        electrodeId
+                    );
     });
 
 
@@ -132,20 +130,31 @@ const updateStepButton =
         const path =
             electrodePaths.get(id);
 
-        if (!path) return;
+        if (!path) {
+            return;
+        }
 
-        if (selectedElectrodes.has(id)) {
+        if (
+            selectedElectrodes.has(id)
+        ) {
 
             selectedElectrodes.delete(id);
-            path.classList.remove("selected");
+
+            path.classList.remove(
+                "selected"
+            );
 
         } else {
 
             selectedElectrodes.add(id);
-            path.classList.add("selected");
+
+            path.classList.add(
+                "selected"
+            );
         }
 
         saveSelectedElectrodes();
+
         updateSelectedDisplay();
     }
 
@@ -154,32 +163,14 @@ const updateStepButton =
 
         selectedElectrodes.clear();
 
-        electrodePaths.forEach((path) => {
-            path.classList.remove("selected");
-        });
+        electrodePaths.forEach(
+            (path) => {
 
-        ids.forEach((id) => {
-
-            const path =
-                electrodePaths.get(id);
-
-            if (!path) return;
-
-            selectedElectrodes.add(id);
-            path.classList.add("selected");
-        });
-
-        saveSelectedElectrodes();
-        updateSelectedDisplay();
-    }
-
-
-    // Blue indication used specifically during protocol execution.
-    function showRunningElectrodes(ids) {
-
-        electrodePaths.forEach((path) => {
-            path.classList.remove("active-step");
-        });
+                path.classList.remove(
+                    "selected"
+                );
+            }
+        );
 
         ids.forEach((id) => {
 
@@ -187,7 +178,42 @@ const updateStepButton =
                 electrodePaths.get(id);
 
             if (path) {
-                path.classList.add("active-step");
+
+                selectedElectrodes.add(id);
+
+                path.classList.add(
+                    "selected"
+                );
+            }
+        });
+
+        saveSelectedElectrodes();
+
+        updateSelectedDisplay();
+    }
+
+
+    function showRunningElectrodes(ids) {
+
+        electrodePaths.forEach(
+            (path) => {
+
+                path.classList.remove(
+                    "active-step"
+                );
+            }
+        );
+
+        ids.forEach((id) => {
+
+            const path =
+                electrodePaths.get(id);
+
+            if (path) {
+
+                path.classList.add(
+                    "active-step"
+                );
             }
         });
     }
@@ -195,9 +221,14 @@ const updateStepButton =
 
     function clearRunningElectrodes() {
 
-        electrodePaths.forEach((path) => {
-            path.classList.remove("active-step");
-        });
+        electrodePaths.forEach(
+            (path) => {
+
+                path.classList.remove(
+                    "active-step"
+                );
+            }
+        );
     }
 
 
@@ -206,7 +237,9 @@ const updateStepButton =
         localStorage.setItem(
             "selectedElectrodes",
             JSON.stringify(
-                Array.from(selectedElectrodes)
+                Array.from(
+                    selectedElectrodes
+                )
             )
         );
     }
@@ -214,34 +247,25 @@ const updateStepButton =
 
     function updateSelectedDisplay() {
 
-        if (selectedElectrodes.size === 0) {
+        if (
+            selectedElectrodes.size === 0
+        ) {
 
-            selectedDisplay.textContent = "None";
+            selectedDisplay.textContent =
+                "None";
 
         } else {
 
             selectedDisplay.textContent =
-                Array.from(selectedElectrodes).join(", ");
+                Array.from(
+                    selectedElectrodes
+                ).join(", ");
         }
     }
 
 
-    clearElectrodesButton.addEventListener(
-        "click",
-        () => {
-
-            if (protocolRunning) {
-                return;
-            }
-
-            setSelectedElectrodes([]);
-            clearRunningElectrodes();
-        }
-    );
-
-
     // =========================================================
-    // PROTOCOL
+    // PROTOCOL STATE
     // =========================================================
 
     let protocol = JSON.parse(
@@ -266,11 +290,20 @@ const updateStepButton =
     }
 
 
+    // =========================================================
+    // ADD NEW STEP
+    // =========================================================
+
     function addProtocolStep() {
 
-        if (selectedElectrodes.size === 0) {
+        if (
+            selectedElectrodes.size === 0
+        ) {
 
-            alert("Select at least one electrode first.");
+            alert(
+                "Select at least one electrode first."
+            );
+
             return;
         }
 
@@ -283,28 +316,34 @@ const updateStepButton =
         const frequency =
             Number(frequencyInput.value);
 
-        if (!Number.isFinite(duration) || duration <= 0) {
+        if (
+            !Number.isFinite(duration) ||
+            duration <= 0
+        ) {
 
-            alert("Duration must be greater than 0.");
+            alert(
+                "Duration must be greater than 0."
+            );
+
             return;
         }
 
-        const step = {
+        protocol.push({
 
-            duration,
+            duration: duration,
 
-            voltage,
+            voltage: voltage,
 
-            frequency,
+            frequency: frequency,
 
             label:
                 labelInput.value.trim(),
 
             electrodes:
-                Array.from(selectedElectrodes)
-        };
-
-        protocol.push(step);
+                Array.from(
+                    selectedElectrodes
+                )
+        });
 
         saveProtocol();
 
@@ -312,88 +351,98 @@ const updateStepButton =
             protocol.length - 1;
 
         currentStepIndex =
-            protocol.length - 1;
+            selectedRowIndex;
 
         renderProtocol();
     }
 
 
-    function renderProtocol() {
+    // =========================================================
+    // UPDATE EXISTING STEP
+    // =========================================================
 
-        protocolBody.innerHTML = "";
+    function updateSelectedStep() {
 
-        protocol.forEach((step, index) => {
-
-            const row =
-                document.createElement("tr");
-
-            if (index === currentStepIndex) {
-                row.classList.add("current-protocol-step");
-            }
-
-            if (index === selectedRowIndex) {
-                row.classList.add("selected-protocol-step");
-            }
-
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${step.duration} s</td>
-                <td>${step.voltage} V</td>
-                <td>${step.frequency} Hz</td>
-                <td>${step.label || "-"}</td>
-                <td>${step.electrodes.join(", ")}</td>
-            `;
-
-            row.addEventListener("click", () => {
-
-                if (protocolRunning) {
-                    return;
-                }
-
-                selectedRowIndex = index;
-                currentStepIndex = index;
-
-                loadStepIntoEditor(index);
-                renderProtocol();
-            });
-
-            protocolBody.appendChild(row);
-        });
-    }
-
-
-    function loadStepIntoEditor(index) {
-
-        if (
-            index < 0 ||
-            index >= protocol.length
-        ) {
+        if (protocolRunning) {
             return;
         }
 
-        const step =
-            protocol[index];
+        if (
+            selectedRowIndex < 0 ||
+            selectedRowIndex >= protocol.length
+        ) {
 
-        durationInput.value =
-            step.duration;
+            alert(
+                "Select a protocol step first."
+            );
 
-        voltageInput.value =
-            step.voltage;
+            return;
+        }
 
-        frequencyInput.value =
-            step.frequency;
+        if (
+            selectedElectrodes.size === 0
+        ) {
 
-        labelInput.value =
-            step.label;
+            alert(
+                "Select at least one electrode."
+            );
 
-        setSelectedElectrodes(
-            step.electrodes
-        );
+            return;
+        }
+
+        const duration =
+            Number(durationInput.value);
+
+        const voltage =
+            Number(voltageInput.value);
+
+        const frequency =
+            Number(frequencyInput.value);
+
+        if (
+            !Number.isFinite(duration) ||
+            duration <= 0
+        ) {
+
+            alert(
+                "Duration must be greater than 0."
+            );
+
+            return;
+        }
+
+        protocol[selectedRowIndex] = {
+
+            duration: duration,
+
+            voltage: voltage,
+
+            frequency: frequency,
+
+            label:
+                labelInput.value.trim(),
+
+            electrodes:
+                Array.from(
+                    selectedElectrodes
+                )
+        };
+
+        currentStepIndex =
+            selectedRowIndex;
+
+        saveProtocol();
+
+        renderProtocol();
 
         currentStepDisplay.textContent =
-            `${index + 1} / ${protocol.length}`;
+            `${selectedRowIndex + 1} / ${protocol.length}`;
     }
 
+
+    // =========================================================
+    // DELETE ONE STEP
+    // =========================================================
 
     function deleteSelectedStep() {
 
@@ -406,7 +455,10 @@ const updateStepButton =
             selectedRowIndex >= protocol.length
         ) {
 
-            alert("Select a protocol step first.");
+            alert(
+                "Select a protocol step first."
+            );
+
             return;
         }
 
@@ -417,21 +469,27 @@ const updateStepButton =
 
         saveProtocol();
 
-        if (protocol.length === 0) {
+
+        if (
+            protocol.length === 0
+        ) {
 
             selectedRowIndex = -1;
+
             currentStepIndex = -1;
 
             currentStepDisplay.textContent =
                 "None";
 
-            clearRunningElectrodes();
+            setSelectedElectrodes([]);
 
         } else {
 
             if (
-                selectedRowIndex >= protocol.length
+                selectedRowIndex >=
+                protocol.length
             ) {
+
                 selectedRowIndex =
                     protocol.length - 1;
             }
@@ -448,16 +506,144 @@ const updateStepButton =
     }
 
 
-    function showProtocolStep(index, running = false) {
+    // =========================================================
+    // LOAD A STEP FOR EDITING
+    // =========================================================
+
+    function loadStepIntoEditor(index) {
 
         if (
             index < 0 ||
             index >= protocol.length
         ) {
+
             return;
         }
 
-        currentStepIndex = index;
+        const step =
+            protocol[index];
+
+        durationInput.value =
+            step.duration;
+
+        voltageInput.value =
+            step.voltage;
+
+        frequencyInput.value =
+            step.frequency;
+
+        labelInput.value =
+            step.label || "";
+
+        setSelectedElectrodes(
+            step.electrodes
+        );
+
+        currentStepDisplay.textContent =
+            `${index + 1} / ${protocol.length}`;
+    }
+
+
+    // =========================================================
+    // DRAW PROTOCOL TABLE
+    // =========================================================
+
+    function renderProtocol() {
+
+        protocolBody.innerHTML = "";
+
+        protocol.forEach(
+            (step, index) => {
+
+                const row =
+                    document.createElement("tr");
+
+
+                if (
+                    index === currentStepIndex
+                ) {
+
+                    row.classList.add(
+                        "current-protocol-step"
+                    );
+                }
+
+
+                if (
+                    index === selectedRowIndex
+                ) {
+
+                    row.classList.add(
+                        "selected-protocol-step"
+                    );
+                }
+
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${step.duration} s</td>
+                    <td>${step.voltage} V</td>
+                    <td>${step.frequency} Hz</td>
+                    <td>${step.label || "-"}</td>
+                    <td>${step.electrodes.join(", ")}</td>
+                `;
+
+
+                row.addEventListener(
+                    "click",
+                    () => {
+
+                        if (
+                            protocolRunning
+                        ) {
+
+                            return;
+                        }
+
+                        selectedRowIndex =
+                            index;
+
+                        currentStepIndex =
+                            index;
+
+                        clearRunningElectrodes();
+
+                        loadStepIntoEditor(
+                            index
+                        );
+
+                        renderProtocol();
+                    }
+                );
+
+
+                protocolBody.appendChild(
+                    row
+                );
+            }
+        );
+    }
+
+
+    // =========================================================
+    // MANUAL STEP NAVIGATION
+    // =========================================================
+
+    function showProtocolStep(
+        index,
+        running = false
+    ) {
+
+        if (
+            index < 0 ||
+            index >= protocol.length
+        ) {
+
+            return;
+        }
+
+        currentStepIndex =
+            index;
 
         const step =
             protocol[index];
@@ -475,11 +661,11 @@ const updateStepButton =
             step.frequency;
 
         labelInput.value =
-            step.label;
+            step.label || "";
+
 
         if (running) {
 
-            // Blue = currently executing protocol step.
             showRunningElectrodes(
                 step.electrodes
             );
@@ -502,7 +688,10 @@ const updateStepButton =
         if (
             protocol.length === 0 ||
             protocolRunning
-        ) return;
+        ) {
+
+            return;
+        }
 
         selectedRowIndex = 0;
 
@@ -515,11 +704,19 @@ const updateStepButton =
         if (
             protocol.length === 0 ||
             protocolRunning
-        ) return;
+        ) {
 
-        if (currentStepIndex <= 0) {
+            return;
+        }
+
+        if (
+            currentStepIndex <= 0
+        ) {
+
             currentStepIndex = 0;
+
         } else {
+
             currentStepIndex--;
         }
 
@@ -537,12 +734,16 @@ const updateStepButton =
         if (
             protocol.length === 0 ||
             protocolRunning
-        ) return;
+        ) {
+
+            return;
+        }
 
         if (
             currentStepIndex <
             protocol.length - 1
         ) {
+
             currentStepIndex++;
         }
 
@@ -560,7 +761,10 @@ const updateStepButton =
         if (
             protocol.length === 0 ||
             protocolRunning
-        ) return;
+        ) {
+
+            return;
+        }
 
         currentStepIndex =
             protocol.length - 1;
@@ -574,10 +778,14 @@ const updateStepButton =
     }
 
 
+    // =========================================================
+    // RUN PROTOCOL
+    // =========================================================
+
     function sleep(ms) {
 
         return new Promise(
-            resolve =>
+            (resolve) =>
                 setTimeout(resolve, ms)
         );
     }
@@ -588,7 +796,10 @@ const updateStepButton =
         if (
             protocol.length === 0 ||
             protocolRunning
-        ) return;
+        ) {
+
+            return;
+        }
 
         protocolRunning = true;
 
@@ -597,6 +808,7 @@ const updateStepButton =
         playButton.disabled = true;
 
         selectedRowIndex = -1;
+
 
         for (
             let i = 0;
@@ -614,13 +826,13 @@ const updateStepButton =
             );
 
             const totalMs =
-                protocol[i].duration * 1000;
+                protocol[i].duration *
+                1000;
 
-            const interval =
-                50;
+            const interval = 50;
 
-            let elapsed =
-                0;
+            let elapsed = 0;
+
 
             while (
                 elapsed < totalMs
@@ -635,13 +847,13 @@ const updateStepButton =
                 elapsed += interval;
             }
 
+
             if (stopRequested) {
                 break;
             }
         }
 
 
-        // Protocol has finished or was stopped.
         protocolRunning = false;
 
         playButton.disabled = false;
@@ -666,25 +878,30 @@ const updateStepButton =
 
     function stopProtocol() {
 
-        if (!protocolRunning) {
+        if (protocolRunning) {
 
-            clearRunningElectrodes();
-            return;
+            stopRequested = true;
         }
 
-        stopRequested = true;
+        clearRunningElectrodes();
     }
 
+
+    // =========================================================
+    // CLEAR PROTOCOL
+    // =========================================================
 
     function clearProtocol() {
 
         if (protocolRunning) {
+
             stopRequested = true;
         }
 
         protocol = [];
 
         currentStepIndex = -1;
+
         selectedRowIndex = -1;
 
         saveProtocol();
@@ -699,48 +916,74 @@ const updateStepButton =
 
 
     // =========================================================
-    // EVENTS
+    // BUTTON EVENTS
     // =========================================================
+
+    clearElectrodesButton.addEventListener(
+        "click",
+        () => {
+
+            if (!protocolRunning) {
+
+                setSelectedElectrodes([]);
+            }
+        }
+    );
+
 
     addStepButton.addEventListener(
         "click",
         addProtocolStep
     );
 
+
+    updateStepButton.addEventListener(
+        "click",
+        updateSelectedStep
+    );
+
+
     deleteStepButton.addEventListener(
         "click",
         deleteSelectedStep
     );
+
 
     clearProtocolButton.addEventListener(
         "click",
         clearProtocol
     );
 
+
     firstButton.addEventListener(
         "click",
         goToFirstStep
     );
+
 
     previousButton.addEventListener(
         "click",
         goToPreviousStep
     );
 
+
+    playButton.addEventListener(
+        "click",
+        runProtocol
+    );
+
+
     nextButton.addEventListener(
         "click",
         goToNextStep
     );
+
 
     lastButton.addEventListener(
         "click",
         goToLastStep
     );
 
-    playButton.addEventListener(
-        "click",
-        runProtocol
-    );
 
     stopButton.addEventListener(
         "click",
@@ -753,10 +996,11 @@ const updateStepButton =
     // =========================================================
 
     updateSelectedDisplay();
+
     renderProtocol();
 
     console.log(
-        `Found ${electrodeNumber - 1} candidate electrodes.`
+        `EWOD UI ready. Found ${electrodeNumber - 1} candidate electrodes.`
     );
 
 });

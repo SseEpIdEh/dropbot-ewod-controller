@@ -85,61 +85,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const electrodePaths =
         new Map();
 
-    let electrodeNumber = 1;
 
 
-    svg.querySelectorAll("path").forEach((path) => {
+    svg.querySelectorAll('path[id^="electrode"]').forEach((path) => {
 
-        const style =
-            path.getAttribute("style") || "";
+    const electrodeId = path.id;
 
-        if (
-            style.includes("fill:#FFFFFF") ||
-            style.includes("fill:#ffffff")
-        ) {
+    path.classList.add("electrode");
 
-            const electrodeId =
-                "E" +
-                String(electrodeNumber).padStart(3, "0");
+    path.dataset.electrode = electrodeId;
 
-            path.classList.add("electrode");
+    electrodePaths.set(
+        electrodeId,
+        path
+    );
 
-            path.dataset.electrode =
-                electrodeId;
+    if (
+        selectedElectrodes.has(electrodeId)
+    ) {
+        path.classList.add("selected");
+    }
 
-            electrodePaths.set(
-                electrodeId,
-                path
-            );
+    path.addEventListener(
+        "click",
+        (event) => {
 
-            if (
-                selectedElectrodes.has(electrodeId)
-            ) {
-                path.classList.add("selected");
+            event.stopPropagation();
+
+            if (protocolRunning) {
+                return;
             }
 
-            path.addEventListener(
-                "click",
-                (event) => {
-
-                    event.stopPropagation();
-
-                    if (protocolRunning) {
-                        return;
-                    }
-
-                    toggleElectrode(
-                        electrodeId
-                    );
-                }
+            toggleElectrode(
+                electrodeId
             );
-
-            electrodeNumber++;
         }
-    });
+    );
+
+});
 
 
-    function toggleElectrode(id) {
+function toggleElectrode(id) {
 
         const path =
             electrodePaths.get(id);
@@ -1014,7 +1000,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderProtocol();
 
     console.log(
-        `EWOD UI ready. Found ${electrodeNumber - 1} candidate electrodes.`
+        `EWOD UI ready. Found ${electrodePaths.size} electrodes.`
     );
 
 });
