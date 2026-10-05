@@ -1,0 +1,90 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8">
+<div class="chip-container" id="chip-container">
+
+    <div class="svg-wrapper">
+        {{ svg_content | safe }}
+    </div>
+
+</div>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EWOD Control Platform</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>EWOD Control Platform</h1>
+    <p>DropBot-based Digital Microfluidics Controller</p>
+</header>
+
+<main>
+
+    <section class="card chip-panel">
+        <h2>EWOD Chip</h2>
+
+        <div class="chip-container">
+            <img
+                src="{{ url_for('static', filename='chip/ewod-chip.svg') }}"
+                alt="EWOD chip schematic"
+                class="chip-image"
+            >
+        </div>
+    </section>
+
+
+    <section class="card">
+        <h2>Protocol</h2>
+
+        <p>No protocol loaded yet.</p>
+
+        <button disabled>Add Step</button>
+        <button disabled>Run Protocol</button>
+        <button disabled>Stop</button>
+    </section>
+
+
+    <section class="card">
+        <h2>Measurements</h2>
+
+        <div class="measurement-grid">
+
+            <div>
+                <span class="label">Elapsed Time</span>
+                <span class="value">-- s</span>
+            </div>
+
+            <div>
+                <span class="label">Droplet Speed</span>
+                <span class="value">-- mm/s</span>
+            </div>
+
+            <div>
+                <span class="label">Distance</span>
+                <span class="value">-- mm</span>
+            </div>
+
+            <div>
+                <span class="label">Current Electrode</span>
+                <span class="value">--</span>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section class="card">
+        <h2>Real-Time Graph</h2>
+
+        <div class="graph-placeholder">
+            Real-time experiment data will appear here.
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

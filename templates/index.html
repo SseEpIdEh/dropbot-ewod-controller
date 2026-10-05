@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EWOD Control Platform</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>EWOD Control Platform</h1>
+    <p>DropBot-based Digital Microfluidics Controller</p>
+</header>
+
+<main>
+
+    <section class="card chip-panel">
+        <h2>EWOD Chip</h2>
+
+        <div class="chip-container" id="chip-container">
+            <div class="svg-wrapper">
+                {{ svg_content | safe }}
+            </div>
+        </div>
+
+        <div class="selected-electrode-panel">
+            Selected electrodes:
+            <span id="selected-electrode">None</span>
+
+            <button id="clear-electrodes" type="button">
+                Turn Off All
+            </button>
+        </div>
+    </section>
+
+    
+    <section class="card protocol-panel">
+        <h2>Protocol</h2>
+
+        <div class="protocol-inputs">
+
+            <label>
+                Duration (s)
+                <input id="step-duration"
+                       type="number"
+                       value="1"
+                       min="0.1"
+                       step="0.1">
+            </label>
+
+            <label>
+                Voltage (V)
+                <input id="step-voltage"
+                       type="number"
+                       value="100"
+                       min="0">
+            </label>
+
+            <label>
+                Frequency (Hz)
+                <input id="step-frequency"
+                       type="number"
+                       value="10000"
+                       min="1">
+            </label>
+
+            <label>
+                Label
+                <input id="step-label"
+                       type="text"
+                       placeholder="Move / Hold / Dispense">
+            </label>
+
+        </div>
+
+        <button id="add-step" type="button">
+            Add Current Selection
+        </button>
+
+        <button id="update-step" type="button">
+            Update Selected Step
+        </button>
+
+        <button id="delete-step" type="button">
+            Delete Selected Step
+        </button>
+
+        <button id="clear-protocol" type="button">
+            Clear Protocol
+        </button>
+
+        <div class="protocol-navigation">
+
+            <button id="first-step" type="button">|←</button>
+            <button id="previous-step" type="button">←</button>
+            <button id="play-protocol" type="button">▶</button>
+            <button id="next-step" type="button">→</button>
+            <button id="last-step" type="button">→|</button>
+            <button id="stop-protocol" type="button">■</button>
+
+        </div>
+
+        <div class="protocol-status">
+            Current step:
+            <strong id="current-step-display">None</strong>
+        </div>
+
+        <div class="protocol-table-wrapper">
+
+            <table id="protocol-table">
+
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Duration</th>
+                        <th>Voltage</th>
+                        <th>Frequency</th>
+                        <th>Label</th>
+                        <th>Electrodes</th>
+                    </tr>
+                </thead>
+
+                <tbody id="protocol-body">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <section class="card">
+        <h2>Measurements</h2>
+
+        <div class="measurement-grid">
+
+            <div>
+                <span class="label">Elapsed Time</span>
+                <span class="value">-- s</span>
+            </div>
+
+            <div>
+                <span class="label">Droplet Speed</span>
+                <span class="value">-- mm/s</span>
+            </div>
+
+            <div>
+                <span class="label">Distance</span>
+                <span class="value">-- mm</span>
+            </div>
+
+            <div>
+                <span class="label">Current Electrode</span>
+                <span class="value">--</span>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Real-Time Graph</h2>
+
+        <div class="graph-placeholder">
+            Real-time experiment data will appear here.
+        </div>
+    </section>
+
+</main>
+
+
+<script src="{{ url_for('static', filename='js/chip.js') }}"></script>
+
+</body>
+</html>

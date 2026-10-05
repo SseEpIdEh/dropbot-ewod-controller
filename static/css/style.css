@@ -1,0 +1,279 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    padding: 20px 30px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header p {
+    margin: 6px 0 0;
+    color: #666;
+}
+
+main {
+    padding: 25px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.chip-panel {
+    grid-row: span 2;
+}
+.chip-container {
+    width: 100%;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.chip-image {
+    width: 94%;
+    height: auto;
+    max-height: 760px;
+    object-fit: contain;
+}.chip-image {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+}
+
+.measurement-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.measurement-grid div {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+}
+
+.value {
+    display: block;
+    margin-top: 5px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.graph-placeholder {
+    height: 220px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+button {
+    padding: 10px 14px;
+    margin-right: 8px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+}
+
+@media (max-width: 900px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+
+    .chip-panel {
+        grid-row: auto;
+    }
+}
+
+/* Inline EWOD SVG */
+.svg-wrapper {
+    width: 94%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.svg-wrapper svg {
+    width: 100%;
+    height: auto;
+    max-height: 720px;
+    display: block;
+}
+
+
+/* ------------------------------------------------
+   Interactive EWOD electrodes
+------------------------------------------------ */
+
+.electrode {
+    cursor: pointer;
+    transition: opacity 0.12s ease;
+}
+
+.electrode:hover {
+    fill: #8ecae6 !important;
+    stroke: #219ebc !important;
+}
+
+.electrode.selected {
+    fill: #ffb703 !important;
+    stroke: #fb8500 !important;
+    stroke-width: 0.35 !important;
+}
+
+.selected-electrode-panel {
+    margin-top: 15px;
+    padding: 12px 16px;
+    background: #f5f6f8;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+#selected-electrode {
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+#clear-electrodes {
+    margin-left: 15px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+
+/* ------------------------------------------------
+   EWOD Protocol Editor
+------------------------------------------------ */
+
+.protocol-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.protocol-inputs label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 13px;
+    color: #555;
+}
+
+.protocol-inputs input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.protocol-navigation {
+    display: flex;
+    gap: 7px;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+.protocol-navigation button {
+    min-width: 45px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.protocol-status {
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.protocol-table-wrapper {
+    overflow-x: auto;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+#protocol-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+#protocol-table th,
+#protocol-table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#protocol-table th {
+    position: sticky;
+    top: 0;
+    background: #f5f6f8;
+}
+
+#protocol-table tbody tr {
+    cursor: pointer;
+}
+
+#protocol-table tbody tr:hover {
+    background: #f3f5f7;
+}
+
+#protocol-table tbody tr.current-protocol-step {
+    background: #e7f3ff;
+}
+
+
+/* Currently executing electrode(s) */
+.electrode.active-step {
+    fill: #2196f3 !important;
+    stroke: #0d47a1 !important;
+    stroke-width: 0.35 !important;
+}
+
+
+/* Protocol row currently being executed */
+#protocol-table tbody tr.current-protocol-step {
+    background: #d9ecff;
+    font-weight: 600;
+}
+
+
+/* Row manually selected for editing/deleting */
+#protocol-table tbody tr.selected-protocol-step {
+    outline: 2px solid #777;
+    outline-offset: -2px;
+}
