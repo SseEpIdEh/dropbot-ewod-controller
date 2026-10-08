@@ -481,3 +481,768 @@ button {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+
+/* =====================================================
+   EXPERIMENT 2x2 LAYOUT
+   Top-left:     EWOD chip
+   Top-right:    Camera
+   Bottom-left:  Protocol
+   Bottom-right: Real-time graph
+   ===================================================== */
+
+.main-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(500px, 1fr)
+        minmax(500px, 1fr);
+
+    grid-template-areas:
+        "chip camera"
+        "protocol graph"
+        "hardware measurements";
+
+    gap: 20px;
+
+    align-items: start;
+}
+
+
+/*
+The old left/right column wrappers should not control
+the layout anymore. Their children become grid items.
+*/
+.left-column,
+.right-column {
+    display: contents;
+}
+
+
+/* Main experiment panels */
+
+.chip-panel {
+    grid-area: chip;
+    order: initial;
+}
+
+.camera-panel {
+    grid-area: camera;
+    order: initial;
+}
+
+.protocol-panel {
+    grid-area: protocol;
+    order: initial;
+}
+
+.graph-panel {
+    grid-area: graph;
+    order: initial;
+}
+
+
+/* Secondary controls */
+
+.hardware-panel {
+    grid-area: hardware;
+    order: initial;
+}
+
+.measurements-panel {
+    grid-area: measurements;
+    order: initial;
+}
+
+
+/* Keep cards aligned nicely */
+
+.main-layout .card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Stack vertically on smaller screens */
+
+@media (max-width: 1100px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+            "chip"
+            "camera"
+            "protocol"
+            "graph"
+            "hardware"
+            "measurements";
+    }
+}
+
+
+/* =====================================================
+   EWOD EXPERIMENT LAYOUT
+   Left:
+     DropBot Control
+     EWOD Chip
+     Protocol
+     Measurements
+
+   Right:
+     Live Camera
+     Real-Time Graph
+   ===================================================== */
+
+.main-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(500px, 1fr)
+        minmax(500px, 1fr);
+
+    grid-template-areas:
+        "hardware camera"
+        "chip     graph"
+        "protocol graph"
+        "measurements graph";
+
+    gap: 20px;
+
+    align-items: start;
+}
+
+
+/*
+Allow the cards inside the old left/right
+wrappers to participate directly in the grid.
+*/
+.left-column,
+.right-column {
+    display: contents;
+}
+
+
+/* Left side */
+
+.hardware-panel {
+    grid-area: hardware;
+    order: initial;
+}
+
+.chip-panel {
+    grid-area: chip;
+    order: initial;
+}
+
+.protocol-panel {
+    grid-area: protocol;
+    order: initial;
+}
+
+.measurements-panel {
+    grid-area: measurements;
+    order: initial;
+}
+
+
+/* Right side */
+
+.camera-panel {
+    grid-area: camera;
+    order: initial;
+}
+
+.graph-panel {
+    grid-area: graph;
+    order: initial;
+}
+
+
+/* Consistent sizing */
+
+.main-layout .card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Mobile / narrow-window layout */
+
+@media (max-width: 1100px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+            "hardware"
+            "camera"
+            "chip"
+            "protocol"
+            "graph"
+            "measurements";
+    }
+}
+
+
+/* =====================================================
+   COMPACT TWO-COLUMN EXPERIMENT LAYOUT
+   ===================================================== */
+
+.main-layout {
+    display: grid;
+    grid-template-columns:
+        minmax(500px, 1fr)
+        minmax(500px, 1fr);
+
+    gap: 16px;
+
+    align-items: start;
+}
+
+
+/* Restore the two actual vertical columns */
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+/* LEFT COLUMN ORDER */
+
+.hardware-panel {
+    order: 1;
+}
+
+.chip-panel {
+    order: 2;
+}
+
+.protocol-panel {
+    order: 3;
+}
+
+.measurements-panel {
+    order: 4;
+}
+
+
+/* RIGHT COLUMN ORDER */
+
+.camera-panel {
+    order: 1;
+}
+
+.graph-panel {
+    order: 2;
+}
+
+
+/* Remove old grid-area behavior */
+
+.hardware-panel,
+.chip-panel,
+.protocol-panel,
+.measurements-panel,
+.camera-panel,
+.graph-panel {
+    grid-area: auto;
+}
+
+
+/* Keep cards compact */
+
+.left-column .card,
+.right-column .card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Small-screen layout */
+
+@media (max-width: 1100px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .left-column,
+    .right-column {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+
+/* =====================================================
+   COMPACT TWO-COLUMN EXPERIMENT LAYOUT
+   ===================================================== */
+
+.main-layout {
+    display: grid;
+    grid-template-columns:
+        minmax(500px, 1fr)
+        minmax(500px, 1fr);
+
+    gap: 16px;
+
+    align-items: start;
+}
+
+
+/* Restore the two actual vertical columns */
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+/* LEFT COLUMN ORDER */
+
+.hardware-panel {
+    order: 1;
+}
+
+.chip-panel {
+    order: 2;
+}
+
+.protocol-panel {
+    order: 3;
+}
+
+.measurements-panel {
+    order: 4;
+}
+
+
+/* RIGHT COLUMN ORDER */
+
+.camera-panel {
+    order: 1;
+}
+
+.graph-panel {
+    order: 2;
+}
+
+
+/* Remove old grid-area behavior */
+
+.hardware-panel,
+.chip-panel,
+.protocol-panel,
+.measurements-panel,
+.camera-panel,
+.graph-panel {
+    grid-area: auto;
+}
+
+
+/* Keep cards compact */
+
+.left-column .card,
+.right-column .card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Small-screen layout */
+
+@media (max-width: 1100px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .left-column,
+    .right-column {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+
+/* =====================================================
+   FINAL EWOD EXPERIMENT LAYOUT
+   ===================================================== */
+
+.main-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(500px, 1fr)
+        minmax(500px, 1fr);
+
+    grid-template-rows:
+        auto
+        auto
+        auto
+        auto;
+
+    gap: 16px;
+
+    align-items: start;
+}
+
+
+/*
+Make cards participate directly in the main grid,
+regardless of their original left/right wrapper.
+*/
+.left-column,
+.right-column {
+    display: contents;
+}
+
+
+/* ---------------------------------
+   LEFT SIDE
+   --------------------------------- */
+
+.hardware-panel {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.chip-panel {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.protocol-panel {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+.measurements-panel {
+    grid-column: 1;
+    grid-row: 4;
+}
+
+
+/* ---------------------------------
+   RIGHT SIDE
+   --------------------------------- */
+
+.camera-panel {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.graph-panel {
+    grid-column: 2;
+    grid-row: 3 / span 2;
+}
+
+
+/* Remove old ordering/area rules */
+
+.hardware-panel,
+.chip-panel,
+.protocol-panel,
+.measurements-panel,
+.camera-panel,
+.graph-panel {
+    order: initial;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* ---------------------------------
+   SMALL SCREEN
+   --------------------------------- */
+
+@media (max-width: 1100px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .hardware-panel,
+    .camera-panel,
+    .chip-panel,
+    .protocol-panel,
+    .graph-panel,
+    .measurements-panel {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+
+
+/* ===== FINAL INDEPENDENT EXPERIMENT COLUMNS ===== */
+
+.main-layout {
+    display: grid;
+
+    grid-template-columns:
+        minmax(500px, 1fr)
+        minmax(500px, 1fr);
+
+    gap: 16px;
+
+    align-items: start;
+}
+
+
+/*
+Each side is now its own independent vertical stack.
+This prevents the tall camera from creating empty
+space underneath DropBot Control.
+*/
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+
+/*
+Previous grid-area rules are no longer needed.
+*/
+
+.hardware-panel,
+.chip-panel,
+.protocol-panel,
+.measurements-panel,
+.camera-panel,
+.graph-panel {
+    grid-area: auto;
+    grid-column: auto;
+    grid-row: auto;
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Camera pan controls */
+
+.camera-pan-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-left: 12px;
+}
+
+
+.camera-pan-controls button {
+    min-width: 36px;
+    padding: 5px 10px;
+
+    border: 1px solid #bbb;
+    border-radius: 6px;
+
+    background: #fff;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease;
+}
+
+
+.camera-pan-controls button:hover {
+    box-shadow:
+        0 2px 6px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+.camera-pan-controls button:active {
+    transform:
+        translateY(1px)
+        scale(0.97);
+}
+
+
+/* Mobile */
+
+@media (max-width: 1100px) {
+
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/* ===== SMOOTH CAMERA PAN ===== */
+
+#camera-feed {
+    transition:
+        transform 0.25s ease,
+        transform-origin 0.25s ease;
+}
+
+
+.camera-pan-controls {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+
+    margin-left: 12px;
+    vertical-align: middle;
+}
+
+
+.camera-pan-row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+
+.camera-pan-controls button {
+    min-width: 34px;
+    padding: 4px 8px;
+
+    border: 1px solid #bbb;
+    border-radius: 6px;
+
+    background: #fff;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease;
+}
+
+
+.camera-pan-controls button:hover {
+    box-shadow:
+        0 2px 6px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+.camera-pan-controls button:active {
+    transform:
+        scale(0.95);
+}
+
+
+
+/* ===== DROPLET VISION V1 ===== */
+
+.vision-stage {
+    position: relative;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    border-radius: 6px;
+}
+
+
+.vision-stage #camera-feed {
+    display: block;
+
+    width: 100%;
+}
+
+
+.vision-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+}
+
+
+.vision-controls {
+    margin-top: 12px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background: #fafafa;
+}
+
+
+.vision-title {
+    margin-bottom: 8px;
+
+    font-weight: 700;
+}
+
+
+.vision-control-row {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.vision-control-row label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+.vision-readout {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 14px;
+
+    margin-top: 8px;
+
+    font-size: 13px;
+}
+
+
+.vision-controls button {
+    padding: 6px 10px;
+
+    border: 1px solid #bbb;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    background: #fff;
+
+    font-weight: 600;
+}
+
+
+.vision-controls button:active {
+    transform: scale(0.97);
+}

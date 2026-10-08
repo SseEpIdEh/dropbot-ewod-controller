@@ -361,26 +361,62 @@ def dropbot_connect():
 
 
 
+
+
+
+
 @app.post("/api/dropbot/disconnect")
 def dropbot_disconnect():
-
     global dropbot_proxy
 
     try:
-
         if dropbot_proxy is not None:
 
-            dropbot_proxy.terminate()
+            print()
+            print("==============================")
+            print("DROPBOT SAFE DISCONNECT")
+            print("==============================")
 
+            # Turn every electrode OFF first.
+            try:
+                dropbot_proxy.turn_off_all_channels()
+                print("All channels OFF")
+            except Exception as error:
+                print(
+                    "Could not turn channels off:",
+                    error
+                )
+
+            # Disable all switching channels.
+            try:
+                dropbot_proxy.disable_all_channels()
+                print("All channels disabled")
+            except Exception as error:
+                print(
+                    "Could not disable channels:",
+                    error
+                )
+
+            # Finally close communication.
+            dropbot_proxy.terminate()
             dropbot_proxy = None
+
+            print("DropBot disconnected")
+            print("==============================")
+            print()
 
         return jsonify({
             "ok": True,
-            "connected": False
+            "connected": False,
+            "hardware_channels_off": True
         })
 
-
     except Exception as error:
+
+        print(
+            "DropBot disconnect error:",
+            repr(error)
+        )
 
         dropbot_proxy = None
 
@@ -389,6 +425,7 @@ def dropbot_disconnect():
             "connected": False,
             "error": str(error)
         }), 500
+
 if __name__ == "__main__":
     app.run(
     debug=True,

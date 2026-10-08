@@ -87,6 +87,116 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+    
+    async function sendManualRealtimeState() {
+
+        const realtimeMode =
+            document.getElementById(
+                "realtime-mode"
+            );
+
+        if (!realtimeMode) {
+            return;
+        }
+
+        const channels = [];
+
+        selectedElectrodes.forEach(
+            (electrodeId) => {
+
+                const path =
+                    electrodePaths.get(
+                        electrodeId
+                    );
+
+                if (!path) {
+                    return;
+                }
+
+                const channelText =
+                    path.getAttribute(
+                        "data-channels"
+                    );
+
+                if (!channelText) {
+                    return;
+                }
+
+                channelText
+                    .split(/[,\s]+/)
+                    .filter(Boolean)
+                    .forEach((channel) => {
+
+                        const number =
+                            Number(channel);
+
+                        if (
+                            Number.isFinite(number)
+                        ) {
+                            channels.push(number);
+                        }
+                    });
+            }
+        );
+
+        const voltage =
+            Number(
+                document.getElementById(
+                    "step-voltage"
+                ).value
+            );
+
+        const frequency =
+            Number(
+                document.getElementById(
+                    "step-frequency"
+                ).value
+            );
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/dropbot/manual",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            channels,
+                            voltage,
+                            frequency,
+                            realtime_mode:
+                                realtimeMode.checked
+                        })
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            console.log(
+                "Manual DropBot state:",
+                result
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Manual DropBot error:",
+                error
+            );
+        }
+    }
+
+    window.sendManualRealtimeState =
+        sendManualRealtimeState;
+
+
     svg.querySelectorAll('path[id^="electrode"]').forEach((path) => {
 
     const electrodeId = path.id;
@@ -152,6 +262,8 @@ function toggleElectrode(id) {
                 "selected"
             );
         }
+
+        sendManualRealtimeState();
 
         saveSelectedElectrodes();
 
