@@ -1,276 +1,650 @@
-∑
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EWOD Control Platform</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <title>EWOD Controller</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/style.css">
 </head>
+
 
 <body>
 
-<header>
-    <h1>EWOD Control Platform</h1>
-    <p>DropBot-based Digital Microfluidics Controller</p>
+<header class="page-header">
+
+    <h1>
+        EWOD Digital Microfluidics Controller
+    </h1>
+
 </header>
 
-<main>
 
-    <section class="card chip-panel">
-        <h2>EWOD Chip</h2>
+<main class="main-layout">
 
-        <div class="chip-container" id="chip-container">
+
+    <!-- ================================================= -->
+    <!-- LEFT COLUMN                                       -->
+    <!-- ================================================= -->
+
+    <div class="left-column">
+
+
+        <!-- ================================================= -->
+        <!-- DROPBOT CONTROL                                   -->
+        <!-- ================================================= -->
+
+        <section class="card hardware-panel">
+
+            <h2>
+                DropBot Control
+            </h2>
+
+
+            <div class="hardware-status-row">
+
+                <div>
+
+                    <span>
+                        DropBot Status:
+                    </span>
+
+                    <span
+                        id="dropbot-status"
+                        class="status-badge status-off">
+
+                        Disconnected
+
+                    </span>
+
+                </div>
+                <div class="dropbot-buttons">
+                            
+                    <button
+                        id="connect-dropbot"
+                        type="button">
+                        Connect DropBot
+                    </button>
+
+                    <button
+                        id="disconnect-dropbot"
+                        type="button">
+                        Disconnect
+                    </button>
+
+                </div>
+
+
+                <div class="realtime-control">
+
+                    <label for="realtime-mode">
+
+                        Realtime Mode
+
+                    </label>
+
+
+                    <input
+                        id="realtime-mode"
+                        type="checkbox">
+
+
+                    <span id="realtime-state">
+                        OFF
+                    </span>
+
+
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ================================================= -->
+        <!-- PROTOCOL                                          -->
+        <!-- ================================================= -->
+
+        <section class="card protocol-panel">
+
+            <h2>
+                Protocol
+            </h2>
+
+
+            <div class="protocol-inputs">
+
+
+                <label>
+
+                    Duration (s)
+
+                    <input
+                        id="step-duration"
+                        type="number"
+                        value="1"
+                        min="0.1"
+                        step="0.1">
+
+                </label>
+
+
+                <label>
+
+                    Voltage (V)
+
+                    <input
+                        id="step-voltage"
+                        type="number"
+                        value="100"
+                        min="0">
+
+                </label>
+
+
+                <label>
+
+                    Frequency (Hz)
+
+                    <input
+                        id="step-frequency"
+                        type="number"
+                        value="10000"
+                        min="1">
+
+                </label>
+
+
+                <label>
+
+                    Label
+
+                    <input
+                        id="step-label"
+                        type="text"
+                        placeholder="Optional">
+
+                </label>
+
+            </div>
+
+
+            <div class="protocol-actions">
+
+                <button
+                    id="add-step"
+                    type="button">
+
+                    Add Current Selection
+
+                </button>
+
+
+                <button
+                    id="update-step"
+                    type="button">
+
+                    Update Selected Step
+
+                </button>
+
+
+                <button
+                    id="delete-step"
+                    type="button">
+
+                    Delete Step
+
+                </button>
+
+
+                <button
+                    id="clear-protocol"
+                    type="button">
+
+                    Clear Protocol
+
+                </button>
+
+            </div>
+
+
+            <div class="protocol-navigation">
+
+                <button
+                    id="first-step"
+                    type="button">
+
+                    |&lt;
+
+                </button>
+
+
+                <button
+                    id="previous-step"
+                    type="button">
+
+                    &lt;
+
+                </button>
+
+
+                <button
+                    id="play-protocol"
+                    type="button">
+
+                    Play
+
+                </button>
+
+
+                <button
+                    id="stop-protocol"
+                    type="button">
+
+                    Stop
+
+                </button>
+
+
+                <button
+                    id="next-step"
+                    type="button">
+
+                    &gt;
+
+                </button>
+
+
+                <button
+                    id="last-step"
+                    type="button">
+
+                    &gt;|
+
+                </button>
+
+            </div>
+
+
+            <div class="current-step-info">
+
+                Current Step:
+
+                <strong id="current-step-display">
+                    None
+                </strong>
+
+            </div>
+
+
+            <div class="protocol-table-wrapper">
+
+                <table id="protocol-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Step</th>
+
+                            <th>Electrodes</th>
+
+                            <th>Duration</th>
+
+                            <th>Voltage</th>
+
+                            <th>Frequency</th>
+
+                            <th>Label</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="protocol-body">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================================= -->
+        <!-- MEASUREMENTS                                      -->
+        <!-- ================================================= -->
+
+        <section class="card measurements-panel">
+
+            <h2>
+                Measurements
+            </h2>
+
+
+            <div class="measurement-grid">
+
+                <div>
+
+                    Elapsed Time
+
+                    <strong id="elapsed-time">
+                        0.0 s
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    Speed
+
+                    <strong id="droplet-speed">
+                        --
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    Distance
+
+                    <strong id="droplet-distance">
+                        --
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    Current Electrode
+
+                    <strong id="current-electrode">
+                        --
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================================= -->
+        <!-- GRAPH                                             -->
+        <!-- ================================================= -->
+
+        <section class="card graph-panel">
+
+            <h2>
+                Real-Time Graph
+            </h2>
+
+            <div class="graph-placeholder">
+
+                Graph data will appear here.
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- RIGHT COLUMN                                      -->
+    <!-- ================================================= -->
+
+    <div class="right-column">
+
+
+        <!-- ================================================= -->
+        <!-- LIVE CAMERA                                       -->
+        <!-- ================================================= -->
+
+        <section class="card camera-panel">
+
+            <h2>
+                Live Camera
+            </h2>
+
+
+            <div class="camera-controls">
+
+
+                <label>
+
+                    Camera Source
+
+                    <select id="camera-select">
+
+                        <option value="">
+                            Default Camera
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <label>
+
+                    Camera Mode
+
+                    <select id="camera-mode">
+
+                        <option value="balanced">
+                            Balanced — 1080p / 30 fps
+                        </option>
+
+                        <option value="detail">
+                            High Detail — 1920×1440 / 30 fps
+                        </option>
+
+                        <option value="speed">
+                            Fast Motion — 1080p / 60 fps
+                        </option>
+
+                    </select>
+
+                </label>
+
+
+                <button
+                    id="start-camera"
+                    type="button">
+
+                    Start Camera
+
+                </button>
+
+
+                <button
+                    id="stop-camera"
+                    type="button">
+
+                    Stop Camera
+
+                </button>
+
+            </div>
+
+
+            <div class="camera-container">
+
+                <video
+                    id="camera-feed"
+                    autoplay
+                    playsinline
+                    muted>
+                </video>
+
+            </div>
+
+
+            <div class="camera-secondary-controls">
+
+                <label for="camera-zoom">
+                    Zoom
+                </label>
+
+
+                <input
+                    id="camera-zoom"
+                    type="range"
+                    min="1"
+                    max="4"
+                    step="0.1"
+                    value="1">
+
+
+                <span id="camera-zoom-value">
+                    1.0×
+                </span>
+
+
+                <button
+                    id="start-recording"
+                    type="button">
+
+                    Record Video
+
+                </button>
+
+
+                <button
+                    id="stop-recording"
+                    type="button"
+                    disabled>
+
+                    Stop Recording
+
+                </button>
+
+            </div>
+
+
+            <div>
+
+                Camera:
+
+                <strong id="camera-status">
+                    Disconnected
+                </strong>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================================================= -->
+        <!-- EWOD CHIP                                         -->
+        <!-- ================================================= -->
+
+        <section class="card chip-panel">
+
+            <h2>
+                EWOD Chip
+            </h2>
+
+
+            <div class="chip-toolbar">
+
+                <button
+                    id="clear-electrodes"
+                    type="button">
+
+                    Turn Off All
+
+                </button>
+
+
+                <button
+                    id="toggle-routes"
+                    type="button">
+
+                    Hide Routes
+
+                </button>
+
+
+                <button
+                    id="toggle-electrode-ids"
+                    type="button">
+
+                    Show DropBot Channels
+
+                </button>
+
+            </div>
+
+
+            <div class="selected-info">
+
+                <span>
+
+                    Selected electrodes:
+
+                    <strong id="selected-electrode">
+                        None
+                    </strong>
+
+                </span>
+
+
+                <span>
+
+                    DropBot channels:
+
+                    <strong id="selected-channels">
+                        None
+                    </strong>
+
+                </span>
+
+            </div>
+
+
             <div class="svg-wrapper">
+
                 {{ svg_content | safe }}
+
             </div>
-        </div>
 
-        <div class="selected-electrode-panel">
-            Selected electrodes:
-            <span id="selected-electrode">None</span>
-            <span style="margin-left: 20px;">
-   		 DropBot channels:
-   		 <strong id="selected-channels">None</strong>
-	   </span>  
+        </section>
 
-            <button id="clear-electrodes" type="button">
-                Turn Off All
-            </button>
-            <button id="toggle-routes" type="button">
-                Hide Routes
-            </button>
-            <button id="toggle-electrode-ids" type="button">
-               Show Electrode IDs
-
-            </button> 
-        </div>
-    </section>
-
-    <section class="card camera-panel">
-
-    <h2>Live Camera</h2>
-
-    <div class="camera-container">
-
-        <video
-            id="camera-feed"
-            autoplay
-            playsinline
-            muted>
-        </video>
 
     </div>
 
-    <div class="camera-controls">
-
-        <label for="camera-select">
-            Camera:
-        </label>
-
-        <select id="camera-select">
-            <option value="">
-                Default Camera
-            </option>
-        </select>
-
-        <button id="start-camera" type="button">
-            Start Camera
-        </button>
-        <label for="camera-mode">
-    Camera Mode:
-</label>
-
-<select id="camera-mode">
-    <option value="balanced">
-        Balanced — 1080p / 30 fps
-    </option>
-
-    <option value="detail">
-        High Detail — 1920×1440 / 30 fps
-    </option>
-
-    <option value="speed">
-        Fast Motion — 1080p / 60 fps
-    </option>
-</select>
-
-        <button id="stop-camera" type="button">
-            Stop Camera
-        </button>
-        
-
-        <label for="camera-zoom">
-    Zoom:
-</label>
-
-<input
-    id="camera-zoom"
-    type="range"
-    min="1"
-    max="4"
-    step="0.1"
-    value="1">
-
-<span id="camera-zoom-value">
-    1.0×
-</span>
-
-<button id="start-recording" type="button">
-    Record Video
-</button>
-
-<button id="stop-recording" type="button" disabled>
-    Stop Recording
-</button>
-    </div>
-
-    <div class="camera-status">
-        Camera status:
-        <span id="camera-status">Off</span>
-    </div>
-
-</section>
-    <section class="card protocol-panel">
-        <h2>Protocol</h2>
-
-        <div class="protocol-inputs">
-
-            <label>
-                Duration (s)
-                <input id="step-duration"
-                       type="number"
-                       value="1"
-                       min="0.1"
-                       step="0.1">
-            </label>
-
-            <label>
-                Voltage (V)
-                <input id="step-voltage"
-                       type="number"
-                       value="100"
-                       min="0">
-            </label>
-
-            <label>
-                Frequency (Hz)
-                <input id="step-frequency"
-                       type="number"
-                       value="10000"
-                       min="1">
-            </label>
-
-            <label>
-                Label
-                <input id="step-label"
-                       type="text"
-                       placeholder="Move / Hold / Dispense">
-            </label>
-
-        </div>
-
-        <button id="add-step" type="button">
-            Add Current Selection
-        </button>
-
-        <button id="update-step" type="button">
-            Update Selected Step
-        </button>
-
-        <button id="delete-step" type="button">
-            Delete Selected Step
-        </button>
-
-        <button id="clear-protocol" type="button">
-            Clear Protocol
-        </button>
-
-        <div class="protocol-navigation">
-
-            <button id="first-step" type="button">|←</button>
-            <button id="previous-step" type="button">←</button>
-            <button id="play-protocol" type="button">▶</button>
-            <button id="next-step" type="button">→</button>
-            <button id="last-step" type="button">→|</button>
-            <button id="stop-protocol" type="button">■</button>
-
-        </div>
-
-        <div class="protocol-status">
-            Current step:
-            <strong id="current-step-display">None</strong>
-        </div>
-
-        <div class="protocol-table-wrapper">
-
-            <table id="protocol-table">
-
-                <thead>
-                    <tr>
-                        <th>Step</th>
-                        <th>Duration</th>
-                        <th>Voltage</th>
-                        <th>Frequency</th>
-                        <th>Label</th>
-                        <th>Electrodes</th>
-                    </tr>
-                </thead>
-
-                <tbody id="protocol-body">
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-
-    <section class="card">
-        <h2>Measurements</h2>
-
-        <div class="measurement-grid">
-
-            <div>
-                <span class="label">Elapsed Time</span>
-                <span class="value">-- s</span>
-            </div>
-
-            <div>
-                <span class="label">Droplet Speed</span>
-                <span class="value">-- mm/s</span>
-            </div>
-
-            <div>
-                <span class="label">Distance</span>
-                <span class="value">-- mm</span>
-            </div>
-
-            <div>
-                <span class="label">Current Electrode</span>
-                <span class="value">--</span>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="card">
-        <h2>Real-Time Graph</h2>
-
-        <div class="graph-placeholder">
-            Real-time experiment data will appear here.
-        </div>
-    </section>
 
 </main>
 
+
 <script src="/static/js/chip.js"></script>
+
 <script src="/static/js/ui-controls.js"></script>
-<script src="{{ url_for('static', filename='js/chip.js') }}"></script>
+
 
 </body>
+
 </html>

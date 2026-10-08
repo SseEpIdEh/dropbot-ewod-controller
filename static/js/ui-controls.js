@@ -666,4 +666,195 @@ if (svg) {
 
 updateSelectedChannels();
 
+
+// =====================================================
+// DROPBOT CONTROL / REALTIME MODE
+// =====================================================
+
+const dropbotStatus =
+    document.getElementById(
+        "dropbot-status"
+    );
+
+const realtimeMode =
+        document.getElementById(
+            "realtime-mode"
+        );
+
+    const realtimeState =
+        document.getElementById(
+            "realtime-state"
+        );
+
+    if (
+        realtimeMode &&
+        realtimeState
+    ) {
+
+        realtimeMode.addEventListener(
+            "change",
+            () => {
+
+                const enabled =
+                    realtimeMode.checked;
+
+                realtimeState.textContent =
+                    enabled
+                        ? "ON"
+                        : "OFF";
+
+                console.log(
+                    "Realtime Mode:",
+                    enabled
+                        ? "ON"
+                        : "OFF"
+                );
+
+                if (
+                    window.sendManualRealtimeState
+                ) {
+                    window.sendManualRealtimeState();
+                }
+            }
+        );
+    }
+
+
+    // =====================================================
+// SEND REALTIME TEST COMMAND TO FLASK
+// =====================================================
+
+
+
+// =====================================================
+// DROPBOT CONNECT / DISCONNECT
+// =====================================================
+
+const connectDropBotButton =
+    document.getElementById(
+        "connect-dropbot"
+    );
+
+const disconnectDropBotButton =
+    document.getElementById(
+        "disconnect-dropbot"
+    );
+
+async function connectDropBot() {
+
+    if (!dropbotStatus) {
+        return;
+    }
+
+    dropbotStatus.textContent =
+        "Connecting...";
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/dropbot/connect",
+                {
+                    method: "POST"
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok || !result.ok) {
+
+            throw new Error(
+                result.error ||
+                "Connection failed"
+            );
+
+        }
+
+        dropbotStatus.textContent =
+            "Connected";
+
+        dropbotStatus.classList.remove(
+            "status-off"
+        );
+
+        dropbotStatus.classList.add(
+            "status-on"
+        );
+
+        console.log(
+            "DropBot connected:",
+            result
+        );
+
+    } catch (error) {
+
+        dropbotStatus.textContent =
+            "Connection Failed";
+
+        console.error(
+            "DropBot connection error:",
+            error
+        );
+
+    }
+}
+
+
+async function disconnectDropBot() {
+
+    if (!dropbotStatus) {
+        return;
+    }
+
+    try {
+
+        await fetch(
+            "/api/dropbot/disconnect",
+            {
+                method: "POST"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "DropBot disconnect error:",
+            error
+        );
+
+    }
+
+    dropbotStatus.textContent =
+        "Disconnected";
+
+    dropbotStatus.classList.remove(
+        "status-on"
+    );
+
+    dropbotStatus.classList.add(
+        "status-off"
+    );
+}
+
+
+if (connectDropBotButton) {
+
+    connectDropBotButton.addEventListener(
+        "click",
+        connectDropBot
+    );
+
+}
+
+
+if (disconnectDropBotButton) {
+
+    disconnectDropBotButton.addEventListener(
+        "click",
+        disconnectDropBot
+    );
+
+}
 });
+
