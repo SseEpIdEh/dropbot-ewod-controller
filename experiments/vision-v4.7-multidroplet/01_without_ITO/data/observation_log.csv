@@ -1,0 +1,6 @@
+observation_id,source,approx_time_seconds,ITO_condition,reported_or_visible_channel_labels,known_physical_droplet_count,observation,validation_status
+video_002s,video,2,without,82/86;94;40/106;114,,Several red markers and channel labels visibly present; channel pairs written as seen; do not interpret the pair as independent droplet count,not independently verified
+video_030s,video,30,without,82/86;94;40/106;114,,Multiple red markers persist; electrode mapping remains visible,not independently verified
+video_080s,video,80,without,86/82;38/42;94;40;114,,Additional labeled candidate near middle-left; other candidate regions visible,not independently verified
+manual_channel_check,user report,,without,40;86;114;38;94,,User compared displayed channel labels against blue chip schematic and reported a match,manual label cross-check only
+channel_33_miss,user report,,without,33,,User reported droplet at large gray channel 33 was not detected in the test,known false negative candidate; separate controlled confirmation pending

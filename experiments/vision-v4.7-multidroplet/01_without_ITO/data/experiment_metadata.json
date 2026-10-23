@@ -1,0 +1,63 @@
+{
+  "experiment_id": "2026-10-23_EWOD_V4.7_without_ITO",
+  "experiment_condition": {
+    "ITO_glass": false,
+    "droplets_present": true,
+    "actuation": false
+  },
+  "source_basis": [
+    "user-reported observations and UI screenshots in conversation",
+    "original user-uploaded annotated WebM"
+  ],
+  "user_reported": {
+    "several_candidate_droplets_detected_simultaneously": true,
+    "manual_reported_channel_names_match_blue_schematic": true,
+    "missed_channel": 33,
+    "note": "Presence, identity, and count not independently ground-truthed frame by frame."
+  },
+  "reported_later_primary_channel_labels": [
+    40,
+    86,
+    114,
+    38,
+    94
+  ],
+  "reported_overlapping_channel_examples": [
+    82,
+    106,
+    42
+  ],
+  "settings_visible_in_UI": {
+    "preview_threshold": 30,
+    "camera_mode_menu": "High Detail \u2014 1920\u00d71440 / 30 fps",
+    "browser_preview_label": "Vision V4.7",
+    "run_state": "UNVERIFIED PREVIEW (NO ACTUATION)"
+  },
+  "recording": {
+    "file": "multidroplet_without_ITO_v4.7.webm",
+    "file_size_bytes": 27674956,
+    "file_size_MiB": 26.39,
+    "codec": "VP8",
+    "container": "WebM",
+    "recorded_frame_width_px": 1920,
+    "recorded_frame_height_px": 1080,
+    "last_packet_timestamp_seconds": 84.801,
+    "duration_note": "Approximate playback duration from last packet timestamp. WebM does not provide a format-duration field.",
+    "frame_rate_note": "Not independently verified; the browser UI showed 30 fps, while raw format metadata does not provide a trustworthy frame-rate field.",
+    "sha256": "375e939bccd6845d31a7855e4ebaf89814fec8d47f9b75da44a7096a2078169c",
+    "filename_timestamp_utc": "2026-10-23T20:59:42Z",
+    "filename_timestamp_note": "Derived from the original filename's epoch milliseconds; may denote recording creation or export, not necessarily start time.",
+    "provenance": "Original user-uploaded annotated recording; bytes copied without modification."
+  },
+  "unknown": [
+    "droplet composition",
+    "droplet volume(s) in microliters",
+    "number of physical droplets at each sampled frame",
+    "per-frame ground truth positions/masks",
+    "numeric detection accuracy",
+    "ambient conditions",
+    "reproducible exposure/focus settings",
+    "code commit hash"
+  ],
+  "code_git_commit": null
+}
