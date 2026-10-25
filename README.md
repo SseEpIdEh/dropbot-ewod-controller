@@ -34,4 +34,4 @@ http://127.0.0.1:5000
 
 ## Development Status
 
-The current interface is for software development and does not yet actuate physical EWOD electrodes.
+The current interface is for software development and does actuate physical EWOD electrodes.
