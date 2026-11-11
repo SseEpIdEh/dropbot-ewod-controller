@@ -12,6 +12,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
+    // SVG calibration clicks — independent of DropBot control.
+    window.ewodCalibrationMode = false;
+    window.ewodSvgCalibrationPoints = [];
+
+    svg.addEventListener("click", (event) => {
+        if (!window.ewodCalibrationMode) return;
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const point = svg.createSVGPoint();
+        point.x = event.clientX;
+        point.y = event.clientY;
+
+        const matrix = svg.getScreenCTM();
+        if (!matrix) return;
+
+        const svgPoint = point.matrixTransform(matrix.inverse());
+
+        if (window.ewodSvgCalibrationPoints.length >= 4) return;
+
+        window.ewodSvgCalibrationPoints.push({
+            x: svgPoint.x,
+            y: svgPoint.y
+        });
+
+        console.log(
+            "SVG calibration point",
+            window.ewodSvgCalibrationPoints.length,
+            svgPoint.x,
+            svgPoint.y
+        );
+
+        if (window.ewodSvgCalibrationPoints.length === 4) {
+            window.ewodCalibrationMode = false;
+            console.log("SVG calibration complete:",
+                window.ewodSvgCalibrationPoints);
+            window.dispatchEvent(new CustomEvent("ewod:svg-calibration-complete"));
+        }
+    }, true);
+
     // =========================================================
     // USER INTERFACE ELEMENTS
     // =========================================================
@@ -79,8 +121,14 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.getItem("selectedElectrodes") || "[]"
     );
 
-    const selectedElectrodes =
-        new Set(savedElectrodes);
+    // Never restore a previously armed electrode selection after page reload.
+    // Saved protocols are unaffected; manual actuation starts with all
+    // electrodes unselected, requiring an explicit new selection.
+    const selectedElectrodes = new Set();
+    if (savedElectrodes.length) {
+        localStorage.setItem("selectedElectrodes", "[]");
+        console.info("Cleared stale manual electrode selection for safe startup.");
+    }
 
     const electrodePaths =
         new Map();
@@ -88,7 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     
-    async function sendManualRealtimeState() {
+    let manualCommandQueue = Promise.resolve();
+
+    function sendManualRealtimeState() {
 
         const realtimeMode =
             document.getElementById(
@@ -153,44 +203,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 ).value
             );
 
-        try {
+        // Capture an immutable snapshot so rapid electrode changes cannot
+        // send requests out of order. Execute one hardware command at a time.
+        const payload = {
+            channels: [...new Set(channels)],
+            voltage,
+            frequency,
+            realtime_mode: realtimeMode.checked
+        };
 
-            const response =
-                await fetch(
-                    "/api/dropbot/manual",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            channels,
-                            voltage,
-                            frequency,
-                            realtime_mode:
-                                realtimeMode.checked
-                        })
-                    }
-                );
-
-            const result =
-                await response.json();
-
-            console.log(
-                "Manual DropBot state:",
-                result
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Manual DropBot error:",
-                error
-            );
-        }
+        const send = async () => {
+            try {
+                const response = await fetch("/api/dropbot/manual", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!response.ok || result.ok === false) {
+                    throw new Error(result.error || `HTTP ${response.status}`);
+                }
+                console.log("Manual DropBot state:", result);
+                if (electrodeTestStatus) {
+                    electrodeTestStatus.textContent = payload.realtime_mode
+                        ? `Manual command accepted: ${payload.channels.length} channel(s) requested.`
+                        : "Realtime OFF: hardware channels switched off.";
+                }
+                return result;
+            } catch (error) {
+                console.error("Manual DropBot error:", error);
+                if (electrodeTestStatus) {
+                    electrodeTestStatus.textContent = `Command not confirmed: ${error.message}`;
+                }
+                return null;
+            }
+        };
+        const task = manualCommandQueue.then(send, send);
+        manualCommandQueue = task;
+        return task;
     }
 
     window.sendManualRealtimeState =
@@ -209,6 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
         electrodeId,
         path
     );
+
+    // Expose the real SVG electrode geometry for Vision V4.
+    // The Map remains live as electrodes are added.
+    window.ewodElectrodePaths = electrodePaths;
+    window.ewodChipSvg = svg;
 
     if (
         selectedElectrodes.has(electrodeId)
@@ -234,6 +289,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+
+    // SINGLE-ELECTRODE TEST SELECTOR (no electrode geometry changes).
+    // The selector changes the *same* selectedElectrodes set as SVG clicks.
+    // Physical actuation is gated by the existing Realtime Mode checkbox
+    // and the backend's connected-Device check.
+    let electrodeTestStatus = null;
+    const chipPanel = svg.closest(".chip-panel");
+    if (chipPanel) {
+        const panel = document.createElement("div");
+        panel.id = "ewod-electrode-test-panel";
+        panel.style.cssText = "margin:12px 0;padding:10px;border:1px solid #cbd5e1;border-radius:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;";
+        const label = document.createElement("label");
+        label.textContent = "Single electrode test: ";
+        label.style.fontWeight = "600";
+        label.htmlFor = "ewod-test-electrode";
+        const select = document.createElement("select");
+        select.id = "ewod-test-electrode";
+        select.setAttribute("aria-label", "Choose one EWOD electrode");
+        select.style.cssText = "max-width:240px;padding:5px;";
+        for (const [id, path] of [...electrodePaths.entries()].sort((a,b) => a[0].localeCompare(b[0]))) {
+            const option = document.createElement("option");
+            option.value = id;
+            option.textContent = `${id} — channel(s): ${path.getAttribute("data-channels") || "unmapped"}`;
+            select.appendChild(option);
+        }
+        const selectOnly = document.createElement("button");
+        selectOnly.type = "button";
+        selectOnly.textContent = "Select Only";
+        selectOnly.title = "Replace the currently selected electrodes with this one";
+        const off = document.createElement("button");
+        off.type = "button";
+        off.textContent = "All Off";
+        off.title = "Clear selection and command all DropBot channels off";
+        electrodeTestStatus = document.createElement("span");
+        electrodeTestStatus.style.cssText = "flex-basis:100%;font-size:12px;color:#475569;";
+        electrodeTestStatus.textContent = "Realtime OFF: electrode selection is visual only. Check DropBot wiring before enabling HV.";
+        selectOnly.addEventListener("click", () => {
+            if (protocolRunning) {
+                electrodeTestStatus.textContent = "Stop the protocol before selecting an electrode manually.";
+                return;
+            }
+            setSelectedElectrodes([select.value]);
+            // Apply a SINGLE channel set atomically, never accumulate a prior selection.
+            sendManualRealtimeState();
+        });
+        off.addEventListener("click", () => {
+            if (protocolRunning) {
+                electrodeTestStatus.textContent = "Stop the protocol first, then switch channels off.";
+                return;
+            }
+            setSelectedElectrodes([]);
+            sendManualRealtimeState();
+        });
+        panel.append(label, select, selectOnly, off, electrodeTestStatus);
+        const graphic = chipPanel.querySelector(".svg-wrapper");
+        chipPanel.insertBefore(panel, graphic);
+    }
 
 function toggleElectrode(id) {
 
@@ -1038,6 +1150,9 @@ function toggleElectrode(id) {
             if (!protocolRunning) {
 
                 setSelectedElectrodes([]);
+                // IMPORTANT: Clearing the blue highlight alone does NOT turn
+                // DropBot hardware off. Send the actual all-off command.
+                sendManualRealtimeState();
             }
         }
     );

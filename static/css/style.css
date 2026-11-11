@@ -1246,3 +1246,89 @@ Previous grid-area rules are no longer needed.
 .vision-controls button:active {
     transform: scale(0.97);
 }
+
+
+/* ========================================================
+   DropBot capacitance sensing
+   ======================================================== */
+
+.capacitance-panel {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(128, 128, 128, 0.35);
+}
+
+.capacitance-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.capacitance-description {
+    font-size: 0.88rem;
+    opacity: 0.75;
+    margin-bottom: 9px;
+}
+
+.capacitance-status {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.capacitance-table {
+    width: 100%;
+    margin-top: 8px;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.capacitance-table th,
+.capacitance-table td {
+    padding: 5px 7px;
+    text-align: left;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+
+/* Enable camera clicks during four-point calibration */
+.vision-overlay.calibrating {
+    pointer-events: auto;
+    cursor: crosshair;
+    z-index: 5;
+}
+
+
+/* Persistent camera alignment controls (no changes to DropBot actuation). */
+.camera-calibration-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-top: 1px solid #ddd;
+}
+.camera-calibration-tools button {
+    padding: 6px 9px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    background: #f8f8f8;
+    cursor: pointer;
+}
+.camera-calibration-tools button:disabled {opacity: 0.5;cursor: not-allowed;}
+#camera-calibration-message {font-size: 12px;flex-basis: 100%;}
+#camera-calibration-message[data-state="warning"] {color:#a13c17;}
+#camera-calibration-message[data-state="good"] {color:#19633d;}
+
+/* V4.2 editable yellow ROI. Does not change the electrode SVG. */
+.ewod-roi-toolbar {display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0;}
+.ewod-roi-toolbar small {flex-basis:100%;font-size:12px;color:#555;}
+.ewod-roi-editor {position:absolute;inset:0;z-index:45;touch-action:none;cursor:crosshair;}
+.ewod-roi-editor[hidden] {display:none !important;}
+.ewod-roi-edit-frame {position:absolute;border:2px solid #ffca28;background:rgba(255,196,0,.04);
+    cursor:move;box-sizing:border-box;touch-action:none;}
+.ewod-roi-handle {position:absolute;width:14px;height:14px;background:#ffca28;border:2px solid #1f2937;
+    border-radius:3px;transform:translate(-50%,-50%);box-sizing:border-box;touch-action:none;}
+.ewod-roi-nw {left:0;top:0;cursor:nwse-resize;}
+.ewod-roi-ne {left:100%;top:0;cursor:nesw-resize;}
+.ewod-roi-se {left:100%;top:100%;cursor:nwse-resize;}
+.ewod-roi-sw {left:0;top:100%;cursor:nesw-resize;}
