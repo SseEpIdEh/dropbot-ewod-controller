@@ -365,6 +365,178 @@ def dropbot_connect():
 
 
 
+
+@app.post("/api/dropbot/capacitance")
+def dropbot_capacitance():
+    global dropbot_proxy
+
+    if dropbot_proxy is None:
+        return jsonify(
+            {
+                "ok": False,
+                "error": "DropBot is not connected."
+            }
+        ), 400
+
+    data = request.get_json(silent=True) or {}
+    channels = data.get("channels", [])
+    mode = data.get("mode", "passive")
+
+    voltage = float(
+        data.get("voltage", 80)
+    )
+
+    frequency = float(
+        data.get("frequency", 10000)
+    )
+
+    try:
+        channels = sorted(
+            {
+                int(channel)
+                for channel in channels
+            }
+        )
+    except (TypeError, ValueError):
+        return jsonify(
+            {
+                "ok": False,
+                "error": "Invalid channel list."
+            }
+        ), 400
+
+    if not channels:
+        return jsonify(
+            {
+                "ok": False,
+                "error": "Select at least one electrode."
+            }
+        ), 400
+
+    number_of_channels = int(
+        dropbot_proxy.number_of_channels
+    )
+
+    invalid = [
+        channel
+        for channel in channels
+        if channel < 0 or
+        channel >= number_of_channels
+    ]
+
+    if invalid:
+        return jsonify(
+            {
+                "ok": False,
+                "error":
+                    "Invalid DropBot channels: " +
+                    str(invalid)
+            }
+        ), 400
+
+    try:
+
+        if mode == "active":
+
+            # Start from a known safe state.
+            dropbot_proxy.turn_off_all_channels()
+
+            number_of_channels = int(
+                dropbot_proxy.number_of_channels
+            )
+
+            mask = np.ones(
+                number_of_channels,
+                dtype=np.uint8
+            )
+
+            for channel in channels:
+                mask[channel] = 0
+
+            dropbot_proxy.set_disabled_channels_mask(
+                mask
+            )
+
+            dropbot_proxy.frequency = frequency
+            dropbot_proxy.voltage = voltage
+
+            states = [0] * int(
+                dropbot_proxy.number_of_channels
+            )
+
+            for channel in channels:
+                states[channel] = 1
+
+            dropbot_proxy.set_state_of_channels(
+                states,
+                append=False,
+                verify=True
+            )
+
+            # Brief settling time before sensing.
+            time.sleep(0.10)
+
+        measurements = (
+            dropbot_proxy.channel_capacitances(
+                channels
+            )
+        )
+
+        results = []
+
+        for channel in channels:
+            capacitance_f = float(
+                measurements.loc[channel]
+            )
+
+            results.append(
+                {
+                    "channel": channel,
+                    "capacitance_f":
+                        capacitance_f,
+                    "capacitance_pf":
+                        capacitance_f * 1e12
+                }
+            )
+
+        return jsonify(
+            {
+                "ok": True,
+                "mode": mode,
+                "channels": channels,
+                "voltage": voltage,
+                "frequency": frequency,
+                "measurements": results
+            }
+        )
+
+    except Exception as error:
+        print(
+            "Capacitance measurement error:",
+            error
+        )
+
+        return jsonify(
+            {
+                "ok": False,
+                "error": str(error)
+            }
+        ), 500
+
+    finally:
+
+        if mode == "active":
+
+            try:
+                dropbot_proxy.turn_off_all_channels()
+                dropbot_proxy.disable_all_channels()
+            except Exception as shutdown_error:
+                print(
+                    "Active capacitance shutdown error:",
+                    shutdown_error
+                )
+
+
 @app.post("/api/dropbot/disconnect")
 def dropbot_disconnect():
     global dropbot_proxy
